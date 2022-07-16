@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header" />
+
+  <body>
+
+    <div class="container">
+      <header class="blog-header py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+          <div class="col-4 pt-1">
+            <a th:href="@{/}"><h2 class="blog-header-logo text-dark">JJ Medical</h2></a>
+          </div>
+
+          <div class="col-4 text-center">
+            <form th:object="${itemSearch}" class="d-flex">
+              <input th:field="*{itemName}" class="form-control me-2" type="search"
+                     placeholder="원하는 상품을 입력하세요" aria-label="Search" autocomplete="off">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+
+          <div class="col-4 d-flex justify-content-end align-items-center">
+
+    <!--        <button type="button" class="btn btn-light text-dark me-2"-->
+    <!--                th:onclick="|location.href='@{/logout}'|">로그아웃</button>-->
+
+            <form th:action="@{/logout}" method="post">
+              <button class="btn btn-light text-dark me-2" th:onclick="|location.href='@{/logout}'|" type="submit">
+                로그아웃
+              </button>
+            </form>
+
+            <button type="button" class="btn btn-info text-dark me-2"
+                    th:onclick="|location.href='@{/members/memberDetail}'|">마이페이지</button>
+
+            <button type="button" class="btn btn-outline-danger" th:onclick="|location.href='@{/cart/cart}'|">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              </svg>
+              장바구니
+            </button>
+
+          </div>
+        </div>
+      </header>
+
+      <hr class="my-4">
+
+      <div class="nav-scroller py-1 mb-2">
+        <nav class="nav d-flex justify-content-between">
+          <a class="p-2 link-secondary" th:href="@{/items/{category} (category=의료소모품)}">의료소모품</a>
+          <a class="p-2 link-secondary" th:href="@{/items/{category} (category=의약품)}">의약품</a>
+          <a class="p-2 link-secondary" th:href="@{/items/{category} (category=의료기기)}">의료기기</a>
+          <a class="p-2 link-secondary" th:href="@{/items/{category} (category=피부용품)}">피부용품</a>
+          <a class="p-2 link-secondary" th:href="@{/items/{category} (category=건강기능식품)}">건강기능식품</a>
+        </nav>
+      </div>
+
+      <hr class="my-4">
+
+    </div>
+
+    <main class="container">
+      <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+        <div class="col-md-6 px-0">
+          <h1 class="display-4 fst-italic">JJ Medical</h1>
+          <p class="lead my-3">의약품/ 의료기기 전문 스토어</p>
+          <!--            <p class="lead mb-0"><a href="#" class="text-white fw-bold"></a></p>-->
+        </div>
+      </div>
+    </main>
+
+    <!--상품 보여주는-->
+
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <!--        row-cols-1 한 열에 컬럼 하나는, row-cols-sm-2 한 열 세로 두 칸, row-cols-md-3 한 열 가로 3칸-->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+
+          <!--db에 모든 아이템을 갖고와 하나씩 뿌림-->
+          <div class="col" th:each="item : ${items}">
+
+            <div class="card" style="width: 18rem;">
+
+              <!--""로 감싸져 있어 db에 이미지경로 넣을때 ""감쌀 필요 없음-->
+              <img th:src = "${item.imageSrc}" width="200" height="300" class="card-img-top" alt="...">
+
+              <div class="card-body">
+
+                <a class="p-2 link-secondary" th:href="@{/item/{itemId} (itemId=${item.id})}" >
+                  <h5 class="card-title" th:text="${item.name}">
+                    상품 이름
+                  </h5>
+                </a>
+
+                <p class="card-text" th:text="${item.price}">상품 가격</p>
+
+                <input type="hidden" class="individual_Rate" th:value="${item.rate}">
+
+<!--                상품 아이디와 등급 보내기-->
+                <a th:href="'javascript:cartCheck('+${item.id}+', '+${item.rate}+')'" class="btn btn-primary">장바구니에 담기</a>
+<!--                <a th:href="'javascript:cartCheck()'" class="btn btn-primary">장바구니에 담기</a>-->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!--페이징 처리-->
+    <div class="container">
+      <div class="py-5 text-center">
+
+        <!--        <div class="pagination">-->
+        <ul>
+          <li th:each="page : ${#numbers.sequence(0, totalPage - 1)}">
+            <a th:href="@{/(page=${pageStat.index})}" th:text="${pageStat.index + 1}"></a>
+          </li>
+        </ul>
+        <!--        </div>-->
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+          crossorigin="anonymous"></script>
+
+  </body>
+  <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript">
+
+    //상품이 의사/ 의료사업자만 구매할 수 있는 상품인지 체크
+    const form = {
+        itemId : '',
+        rate : ''
+    }
+
+    //장바구니 담기 버튼 눌렀을 때, 등급만 확인하면 되니 등급값만 보냄
+    function cartCheck(itemId, rate) {
+
+        form.itemId = itemId;
+        form.rate = rate;
+
+            $.ajax({
+                url: '/home/cart/itemCheck',
+                type: 'POST',
+                data: form,
+                success: function(idAndResult){
+
+                    //자바스크립트는 값 게터로 가져올때 get안써주고 필드이름만?
+                    cartAlert(idAndResult.itemId, idAndResult.result);
+                }
+            })
+    }
+    //0은 로그인 하지 않은 사용자가 상품을 장바구니에 담으려 할 때
+    //현재페이지는 로그인한 사용자의 홈화면이므로 0이 나올 수 없음
+    //값이 1이면 경고창, 2이면 자바스크립트 cartPut()실행해 상품 카트에 담음
+    function cartAlert(itemId, result){
+
+        if(result == '1'){
+            alert("의사/ 의료사업자가 아니면 이 상품은 장바구니에 담지 못합니다!");
+        } else if(result == '2'){
+            alert("상품이 장바구니에 담겼습니다!");
+            cartPut(itemId);
+        }
+    }
+
+    function cartPut(itemId) {
+      var form = document.createElement("form");
+      form.setAttribute("method", "post");
+      form.setAttribute("action", "/cart/" + itemId + "/itemInstantPut");
+      document.body.appendChild(form);
+      form.submit();
+    }
+  </script>
+</html>

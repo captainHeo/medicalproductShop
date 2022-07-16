@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header"/>
+
+<body>
+<div class="container">
+
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <div>
+
+        <hr class="my-4">
+
+        <div style="margin:10px;" class="row">
+
+            <div class="col-4">
+                <h2>후기내역 조회</h2>
+            </div>
+
+            <div class="col-4">
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <table class="table table-striped">
+
+            <thead>
+                <th>상품 정보</th>
+                <th>후기 내용</th>
+                <th></th>
+            </thead>
+
+            <tbody>
+
+                <tr th:each="review : ${reviewList}">
+
+                    <input type="hidden" class="individual_itemId" th:value="${review.reviewId}">
+
+                    <td>
+                        <div> <h5 th:text="${review.itemName}">상품 이름</h5> </div>
+                        <img th:src = "*{review.itemImageSrc}" width="75" height="75">
+                    </td>
+
+                    <td>
+                        <div><h5 th:text="${review.reviewDate}"></h5></div>
+                        <div><h5 th:text="${review.title}"></h5></div>
+                        <div><h5 th:text="${review.content}"></h5></div>
+                    </td>
+
+                    <td>
+                        <div style="margin:10px;">
+                            <a th:href="@{/review/{id}/modify (id=${review.reviewId})}"
+                               class="btn btn-dark">후기 수정</a>
+                        </div>
+
+                        <div style="margin:10px;">
+                            <a th:href="'javascript:reviewCancel('+${review.reviewId}+')'"
+                               class="btn btn-danger">후기 삭제</a>
+                        </div>
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+</div> <!--container div -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+</body>
+
+<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+
+//cancel버튼 누르면 이 메서드 실행, form을 만들어 post로 /cart/" + id + "/cancel을 호출
+function reviewCancel(id) {
+     var form = document.createElement("form");
+     form.setAttribute("method", "post");
+     form.setAttribute("action", "/review/" + id + "/cancel");
+     document.body.appendChild(form);
+     form.submit();
+     alert("후기가 삭제되었습니다!");
+}
+</script>
+</html>

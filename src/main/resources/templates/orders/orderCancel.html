@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header"/>
+
+<body>
+<div class="container">
+
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <div>
+
+        <hr class="my-4">
+
+        <div style="margin:10px;" class="row">
+
+            <div class="col-4">
+                <h2>주문 취소</h2>
+            </div>
+
+            <hr class="my-4">
+
+        </div>
+
+        <table class="table table-striped">
+
+            <thead>
+                <th>상품명</th>
+                <th>상품사진</th>
+                <th>주문 일자</th>
+                <th>주문 번호</th>
+                <th>수량</th>
+                <th>주문 가격</th>
+                <th>주문 상태</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr th:each="item : ${orderedItems}">
+
+                    <input type="hidden" class="individual_orderId" th:value="${item.orderId}">
+
+                    <td th:text="${item.name}">상품 이름</td>
+
+                    <td> <img th:src = "*{item.imageSrc}" width="75" height="75"> </td>
+
+                    <td th:text="${item.orderDate}">주문 일자</td>
+
+                    <td th:text="${item.orderId}">주문 번호</td>
+
+                    <!--                    <td th:text="${item.quantity}"></td>-->
+                    <td th:text="${item.quantity}">수량</td>
+
+                    <td th:text="${item.price}">주문 가격</td>
+
+                    <td><h5>주문 완료</h5></td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <input type="hidden" th:value="${orderId}">
+
+        <div class="container">
+            <div class="py-5 text-center">
+                <!--                    <button type="button" ><a class="order_btn">결제하기</a></button>-->
+                <!--                    버튼 누르면 자바스크립트 영역에서 order() 실행-->
+                <a th:href="'javascript:orderCancel('+${orderId}+')'"
+                   class="btn btn-dark" a>주문 취소하기</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:replace="fragments/footer :: footer" />
+</div> <!--container div -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+</body>
+
+<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+    function orderCancel(id) {
+     var form = document.createElement("form");
+     form.setAttribute("method", "post");
+     form.setAttribute("action", "/order/" + id + "/cancel");
+     document.body.appendChild(form);
+     form.submit();
+     alert("주문이 취소되었습니다!");
+    }
+</script>
+</html>
